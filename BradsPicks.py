@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 import requests
 import numpy as np
 
-app = Flask(__name__)
+bradspicks = Flask(__name__)
 
 # FanDuel API Endpoint (Replace with actual API URL & key)
 FANDUEL_API_URL = "https://api.fanduel.com/v1/odds"  # Example URL
@@ -80,4 +80,4 @@ def get_stats():
     return jsonify(calculate_betting_insights())
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+    bradspicks.run(host="0.0.0.0", port=8080)
