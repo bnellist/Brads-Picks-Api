@@ -4,14 +4,20 @@ FROM python:3.9
 # Set the working directory in the container
 WORKDIR /bradspicks
 
-# Copy project files to the container
-COPY . /bradspicks
+# Copy the requirements fil
+COPY requiremnets.txt .
+
+# copy the rest of the application
+COPY . .
 
 # Install dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Set environment variables
-ENV PORT 8080
+ENV PORT=8080
+
+# Expose port 9090 for Cloud Run
+EXPOSE 8080
 
 # Command to run the app
-CMD ["gunicorn", "-b", "0.0.0.0:8080", "bradspicks:bradspicks"]
+CMD ["python", "bradspicks.py"]
