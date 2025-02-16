@@ -13,6 +13,9 @@ RUN pip install -r requirements.txt
 # copy the rest of the application
 COPY . .
 
+# Set environmnet varibale for Flask
+ENV FLASK_APP=BradsPicks.py
+
 # Set environment variables
 ENV PORT=8080
 
