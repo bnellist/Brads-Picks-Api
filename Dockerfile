@@ -20,4 +20,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Command to run the app
-CMD ["flask", "run", "--host", 0.0.0.0"]
+CMD ["flask", "run", "--host", "0.0.0.0"]
