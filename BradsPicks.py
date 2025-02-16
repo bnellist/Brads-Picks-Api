@@ -75,9 +75,9 @@ def calculate_betting_insights():
     return {"top_bets": insights}
 
 # API Endpoint to Get Betting Picks
-@app.route("/api/stats", methods=["GET"])
+@BradsPicks.route("/api/stats", methods=["GET"])
 def get_stats():
     return jsonify(calculate_betting_insights())
 
 if __name__ == "__main__":
-    bradspicks.run(host="0.0.0.0", port=8080)
+    BradsPicks.run(host="0.0.0.0", port=8080)
