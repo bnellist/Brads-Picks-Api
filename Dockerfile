@@ -20,11 +20,8 @@ ENV FLASK_ENV=production
 # Set environment variables
 ENV PORT=8080
 
-# Use Gunicorn to run the app in production mode
-CMD ["gunicorn", "-b", "0.0.0.0:8808", "BradsPicks:BradsPicks"]
-
 # Expose port 9090 for Cloud Run
 EXPOSE 8080
 
 # Command to run the app
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080","BradsPicks:Bradspicks"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080","BradsPicks:app"]
