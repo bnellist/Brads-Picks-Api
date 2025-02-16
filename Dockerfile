@@ -8,7 +8,7 @@ WORKDIR /app
 COPY requiremnets.txt .
 
 # Install dependencies
-RUN pip install --upgrade pip setuptools && pip install --no-cache-dir -r /app/requirements.txt
+RUN pip install -r requirements.txt
 
 # copy the rest of the application
 COPY . .
@@ -20,4 +20,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Command to run the app
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "bradspicks:app"]
+CMD ["flask", "run", "--host", 0.0.0.0"]
