@@ -27,4 +27,4 @@ CMD ["gunicorn", "-b", "0.0.0.0:8808", "BradsPicks:BradsPicks"]
 EXPOSE 8080
 
 # Command to run the app
-CMD ["flask", "run", "--host", "0.0.0.0"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080","BradsPicks:Bradspicks"]
