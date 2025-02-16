@@ -15,6 +15,7 @@ COPY . .
 
 # Set environmnet varibale for Flask
 ENV FLASK_APP=BradsPicks.py
+ENV FLASK_ENV=production
 
 # Set environment variables
 ENV PORT=8080
