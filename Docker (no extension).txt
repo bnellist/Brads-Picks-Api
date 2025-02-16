@@ -2,16 +2,16 @@
 FROM python:3.9
 
 # Set the working directory in the container
-WORKDIR /bradspicks
+WORKDIR /app
 
 # Copy the requirements fil
 COPY requiremnets.txt .
 
+# Install dependencies
+RUN pip install --upgrade pip setuptools && pip install --no-cache-dir -r requirements.txt
+
 # copy the rest of the application
 COPY . .
-
-# Install dependencies
-RUN pip install --no-cache-dir -r requirements.txt
 
 # Set environment variables
 ENV PORT=8080
@@ -20,4 +20,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Command to run the app
-CMD ["python", "bradspicks.py"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "bradspicks:app"]
