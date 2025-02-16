@@ -2,7 +2,7 @@ from flask import Flask, jsonify
 import requests
 import numpy as np
 
-BradsPicks = Flask(__name__)
+app = Flask(__name__)
 
 # API Endpoints (Replace with actual API URLs & keys)
 FANDUEL_API_KEY = "your_fanduel_api_key"
@@ -65,19 +65,19 @@ def calculate_betting_insights(fanduel_data, score_data):
     return {"top_bets": insights}
 
 # NBA Picks API
-@BradsPicks.route("/api/nba", methods=["GET"])
+@app.route("/api/nba", methods=["GET"])
 def get_nba_picks():
     fanduel_data, score_data = fetch_data(NBA_FANDUEL_URL, NBA_SCORE_URL)
     return jsonify(calculate_betting_insights(fanduel_data, score_data))
 
 # NCAA Picks API
-@BradsPicks.route("/api/ncaa", methods=["GET"])
+@app.route("/api/ncaa", methods=["GET"])
 def get_ncaa_picks():
     fanduel_data, score_data = fetch_data(NCAA_FANDUEL_URL, NCAA_SCORE_URL)
     return jsonify(calculate_betting_insights(fanduel_data, score_data))
 
 # Smart API - Returns NBA picks, but defaults to NCAA if no NBA games are available
-@BradsPicks.route("/api/stats", methods=["GET"])
+@app.route("/api/stats", methods=["GET"])
 def get_smart_picks():
     fanduel_data, score_data = fetch_data(NBA_FANDUEL_URL, NBA_SCORE_URL)
     insights = calculate_betting_insights(fanduel_data, score_data)
