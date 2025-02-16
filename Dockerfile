@@ -2,7 +2,7 @@
 FROM python:3.9
 
 # Set the working directory in the container
-WORKDIR /Brads-Picks_Api
+WORKDIR /Brads-Picks-Api
 
 # Copy the requirements file
 COPY requirements.txt .
