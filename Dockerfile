@@ -24,4 +24,4 @@ ENV PORT=8080
 EXPOSE 8080
 
 # Command to run the app
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080","app:app"]
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080","BradsPicks:app"]
