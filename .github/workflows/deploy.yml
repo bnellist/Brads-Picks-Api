@@ -1,37 +1,41 @@
-
 name: CI/CD for BradsPicks
 
 on:
   push:
     branches:
-      - main  # Trigger on push to main branch
+      - main  # Runs when code is pushed to the main branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-        PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
 
     steps:
     - name: Check out the code
       uses: actions/checkout@v3
 
     - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2  # Latest version
+      uses: docker/setup-buildx-action@v2  # Ensures Docker Buildx is ready
+
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  # Ensure this secret is set in GitHub
+
+    - name: Configure Docker to Use gcloud CLI
+      run: |
+        gcloud auth configure-docker --quiet
 
     - name: Build and Push Docker Image
-      uses: docker/build-push-action@v3  # Latest version
+      uses: docker/build-push-action@v5  # Latest stable version
       with:
         context: .
         push: true
-        tags: gcr.io/$PROJECT_ID/bradspicks:$GITHUB_SHA
+        tags: gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }}
 
     - name: Deploy to Cloud Run
-      uses: google-github-actions/deploy-cloudrun@v0  # Latest version
+      uses: google-github-actions/deploy-cloudrun@v1
       with:
-        project_id: $PROJECT_ID
         service: bradspicks
-        image: gcr.io/$PROJECT_ID/bradspicks:$GITHUB_SHA
+        image: gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }}
         region: us-central1
         allow_unauthenticated: true
