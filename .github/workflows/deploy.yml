@@ -1,45 +1,34 @@
-name: Build and Deploy to Google Cloud Run
+
+name: CI/CD for BradsPicks
 
 on:
   push:
     branches:
-      - main  # Trigger on pushes to the main branch
+      - main  # Trigger on push to main branch
 
 jobs:
-  build-and-deploy:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      # Checkout the repository
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Check out the code
+      uses: actions/checkout@v3
 
-      # Set up Google Cloud credentials using the service account key
-      - name: Set up Google Cloud credentials
-        uses: google-github-actions/setup-gcloud@v3
-        with:
-          project_id: ${{ secrets.GCP_PROJECT_ID }}  # Store your project ID in GitHub Secrets
-          credentials_json: ${{ secrets.GCP_CREDENTIALS_JSON }}  # Store your GCP service account key in GitHub Secrets
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2  # Latest version
 
-      # Set up Docker and build the image
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+    - name: Build and Push Docker Image
+      uses: docker/build-push-action@v3  # Latest version
+      with:
+        context: .
+        push: true
+        tags: gcr.io/$PROJECT_ID/bradspicks:$GITHUB_SHA
 
-      # Build Docker image
-      - name: Build Docker image
-        run: |
-          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }} .
-      
-      # Push Docker image to Google Container Registry
-      - name: Push Docker image to GCR
-        run: |
-          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }}
-
-      # Deploy to Google Cloud Run
-      - name: Deploy to Google Cloud Run
-        run: |
-          gcloud run deploy bradspicks-${{ github.sha }} \
-            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }} \
-            --platform managed \
-            --region us-central1 \
-            --allow-unauthenticated
+    - name: Deploy to Cloud Run
+      uses: google-github-actions/deploy-cloudrun@v0  # Latest version
+      with:
+        project_id: $PROJECT_ID
+        service: bradspicks
+        image: gcr.io/$PROJECT_ID/bradspicks:$GITHUB_SHA
+        region: us-central1
+        allow_unauthenticated: true
