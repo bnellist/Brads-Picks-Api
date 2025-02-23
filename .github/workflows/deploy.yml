@@ -1,3 +1,10 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to the branch you want to trigger the workflow on
+
 jobs:
   build:
     runs-on: ubuntu-latest
