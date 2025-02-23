@@ -34,6 +34,11 @@ jobs:
        gcloud projects add-iam-policy-binding ${{ secrets.GCP_PROJECT_ID }} \
         --member="serviceAccount:${{ secrets.GCP_PROJECT_NUMBER }}@cloudbuild.gserviceaccount.com" \
         --role="roles/artifactregistry.writer"
+
+       gcloud projects add-iam-policy-binding mindful-coder-450821-f3 \
+       --member="serviceAccount:github-actions@mindful-coder-450821-f3.iam.gserviceaccount.com" \
+       --role="roles/artifactregistry.writer"
+     
         
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v1
