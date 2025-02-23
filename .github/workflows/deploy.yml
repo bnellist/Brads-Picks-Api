@@ -14,9 +14,9 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Set up Google Cloud authentication
-        uses: google-github-actions/auth@v0
+        uses: google-github-actions/auth@v1  # Use the latest version
         with:
-          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  # Use the correct secret name
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}  # Correct secret for the service account key
 
       - name: Set up Google Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
