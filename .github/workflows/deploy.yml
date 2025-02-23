@@ -13,9 +13,14 @@ jobs:
     - name: Check out the repository
       uses: actions/checkout@v3
 
-    - name: Authenticate with GitHub Container Registry
+    - name: Authenticate with Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        credentials_json: '${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}'
+
+    - name: Configure Docker to Use gcloud CLI
       run: |
-        echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        gcloud auth configure-docker --quiet
 
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v5
@@ -30,4 +35,4 @@ jobs:
         service: bradspicks
         image: ghcr.io/${{ github.repository_owner }}/bradspicks:${{ github.sha }}
         region: us-central1
-        allow_unauthenticated: true
+        project_id: ${{ secrets.GCP_PROJECT_ID }}  # Provide the GCP project ID here
