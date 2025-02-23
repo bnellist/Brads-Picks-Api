@@ -24,6 +24,6 @@ images:
 timeout: '1200s'
 
 substitutions:
-  _GCP_PROJECT_ID: 'your-new-project-id'  # Set this manually or in GitHub Actions
+  _GCP_PROJECT_ID: 'mindful-coder-450-821-f3'  # Set this manually or in GitHub Actions
   _REGION: 'us-central1'
 
