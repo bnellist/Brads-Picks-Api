@@ -31,14 +31,14 @@ jobs:
    
     - name: Grant Artifact Registry Permissions
       run: |
-       gcloud projects add-iam-policy-binding ${{ secrets.GCP_PROJECT_ID }} \
-        --member="serviceAccount:${{ secrets.GCP_PROJECT_NUMBER }}@cloudbuild.gserviceaccount.com" \
-        --role="roles/artifactregistry.writer"
-
-       gcloud projects add-iam-policy-binding mindful-coder-450821-f3 \
+       
+       gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \
        --member="serviceAccount:github-actions@mindful-coder-450821-f3.iam.gserviceaccount.com" \
        --role="roles/artifactregistry.writer"
-     
+
+       gcloud projects add-iam-policy-binding $GCP_PROJECT_ID \
+       --member="serviceAccount:852422850883@cloudbuild.gserviceaccount.com" \
+       --role="roles/storage.objectViewer"
         
     - name: Deploy to Cloud Run
       uses: google-github-actions/deploy-cloudrun@v1
