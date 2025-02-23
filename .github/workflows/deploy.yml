@@ -3,28 +3,39 @@ name: Build and Deploy to Cloud Run
 on:
   push:
     branches:
-      - main  # Adjust this to the branch you want to trigger the workflow on
+      - main  # Trigger this workflow on push to the main branch
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out the repository
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Authenticate Docker to Google Artifact Registry
-        run: echo "${{ secrets.GCP_SEERVICE_ACCOUNT_KEY }}" | docker login -u _json_key --password-stdin https://us-central1-docker.pkg.dev
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          credentials: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-      - name: Build and Push Docker Image
+      - name: Authenticate Docker to Google Artifact Registry
         run: |
-          docker build -t us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bradspicks-repo/bradspicks:${{ github.sha }} .
-          docker push us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bradspicks-repo/bradspicks:${{ github.sha }}
+          echo "${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}" | gcloud auth activate-service-account --key-file=-
+          gcloud --quiet auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Build Docker image
+        run: |
+          docker build -t gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }} .
+
+      - name: Push Docker image to Google Artifact Registry
+        run: |
+          docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }}
 
       - name: Deploy to Cloud Run
-        uses: google-github-actions/deploy-cloudrun@v1
-        with:
-          service: bradspicks
-          image: us-central1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bradspicks-repo/bradspicks:${{ github.sha }}
-          region: us-central1
-          project_id: ${{ secrets.GCP_PROJECT_ID }}
+        run: |
+          gcloud run deploy bradspicks-${{ github.sha }} \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }} \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated
