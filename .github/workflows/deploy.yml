@@ -1,3 +1,10 @@
+name: Build and Deploy to Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -8,7 +15,7 @@ jobs:
       
       - name: Authenticate with GitHub Container Registry
         run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          echo "${{ secrets.GHCR_PAT }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v5
@@ -17,17 +24,15 @@ jobs:
           push: true
           tags: ghcr.io/${{ github.repository_owner }}/bradspicks:${{ github.sha }}
 
-    - name: Build and Push Docker Image
-      uses: docker/build-push-action@v5
-      with:
-        context: .
-        push: true
-        tags: ghcr.io/${{ github.repository_owner }}/bradspicks:${{ github.sha }}
+      - name: Authenticate with Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
 
-    - name: Deploy to Cloud Run
-      uses: google-github-actions/deploy-cloudrun@v1
-      with:
-        service: bradspicks
-        image: ghcr.io/${{ github.repository_owner }}/bradspicks:${{ github.sha }}
-        region: us-central1
-        project_id: ${{ secrets.GCP_PROJECT_ID }}  # Provide the GCP project ID here
+      - name: Deploy to Cloud Run
+        uses: google-github-actions/deploy-cloudrun@v1
+        with:
+          service: bradspicks
+          image: ghcr.io/${{ github.repository_owner }}/bradspicks:${{ github.sha }}
+          region: us-central1
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
