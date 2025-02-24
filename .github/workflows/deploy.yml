@@ -25,7 +25,20 @@ jobs:
 
       - name: Authenticate Docker to Google Artifact Registry
         run: |
-          gcloud auth configure-docker us-central1-docker.pkg.dev
+           gcloud auth configure-docker us-central1-docker.pkg.dev
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+
+      - name: Authenticate Docker to Google Artifact Registry
+        run: gcloud auth configure-docker gcr.io
 
       - name: Build Docker image
         run: |
