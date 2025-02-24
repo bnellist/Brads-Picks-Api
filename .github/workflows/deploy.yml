@@ -35,11 +35,6 @@ jobs:
         run: |
           docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }}
 
-     - name: Push Docker image to Google Artifact Registry
-       run: |
-         set -x  # Enable debug mode for this step
-         docker push gcr.io/${{ secrets.GCP_PROJECT_ID }}/bradspicks:${{ github.sha }}
-
       - name: Deploy to Cloud Run
         run: |
           gcloud run deploy bradspicks-${{ github.sha }} \
